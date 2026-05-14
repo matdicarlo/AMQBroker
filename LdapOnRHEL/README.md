@@ -260,19 +260,13 @@ activemq {
       connectionURL="ldaps://localhost:1636"
       connectionProtocol="ssl"
       authentication="simple"
-      
-      /* Updated to match your LDIF domain */
       connectionUsername="uid=artemis,ou=users,dc=redhat,dc=com" 
       connectionPassword="password123"
-      
-      /* Search Bases */
       userBase="ou=users,dc=redhat,dc=com"
       userSearchMatching="(uid={0})"
-      
       roleBase="ou=roles,dc=redhat,dc=com"
       roleName="cn"
       roleSearchMatching="(uniqueMember={0})"
-      
       referral="ignore";
 };
 ~~~
