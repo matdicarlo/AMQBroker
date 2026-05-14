@@ -1,0 +1,26 @@
+dn: dc=redhat,dc=com
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+o: Red Hat
+dc: redhat
+
+dn: ou=users,dc=redhat,dc=com
+objectClass: organizationalUnit
+ou: users
+
+dn: ou=roles,dc=redhat,dc=com
+objectClass: organizationalUnit
+ou: roles
+
+dn: uid=artemis,ou=users,dc=redhat,dc=com
+objectClass: inetOrgPerson
+uid: artemis
+sn: Broker
+cn: artemis
+userPassword: password123
+
+dn: cn=amq,ou=roles,dc=redhat,dc=com
+objectClass: groupOfUniqueNames
+cn: amq
+uniqueMember: uid=artemis,ou=users,dc=redhat,dc=com
