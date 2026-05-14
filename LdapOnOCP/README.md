@@ -1,3 +1,6 @@
+# Script
+Run initLdapOnOCP.sh to have the environment ready.
+
 # Environment
 OCP
 AMQ Broker Operator
