@@ -272,19 +272,13 @@ activemq {
 ~~~
 
 ## Edit etc/artemis.profile
-Since you are connecting via localhost but the container certificate likely has a different hostname, Java's security will block the connection.
-
 ~~~
-
 # Locate your JAVA_ARGS and append/update these:
 -Djavax.net.ssl.trustStore=/home/mdicarlo/Programmi/GITHUB/AMQBroker/LdapOnRHEL/amq-ldap-truststore.p12 \
 -Djavax.net.ssl.trustStorePassword=password123 \
 -Djavax.net.ssl.trustStoreType=PKCS12 \
 -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true \
 -Dhawtio.roles=amq \
-
-
-
 ~~~
 
 
@@ -302,18 +296,3 @@ sudo journalctl -u slapd -f
 ./bin/artemis user list --user artemis --password WRONG_PASSWORD
 ~~~
 
-
-~~~
-if [ -z "$JAVA_ARGS" ]; then
-    JAVA_ARGS="-XX:AutoBoxCacheMax=20000 -XX:+PrintClassHistogram -XX:+UseG1GC -XX:+UseStringDeduplication -Xms512M -Xmx2G -Dhawtio.disableProxy=true -Dhawtio.realm=activemq -Dhawtio.offline=true -Dhawtio.rolePrincipalClasses=org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal -Dhawtio.http.strictTransportSecurity=max-age=31536000;includeSubDomains;preload -Djolokia.policyLocation=classpath:jolokia-access.xml -Dlog4j2.disableJmx=true --add-opens java.base/jdk.internal.misc=ALL-UNNAMED -Djavax.net.ssl.trustStore=/opt/apache-artemis-2.53.0.redhat-00003/bin/LdapOnRHEL/etc/amq-ldap-truststore.p12 -Djavax.net.ssl.trustStorePassword=password123 -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true -Dhawtio.roles=amq -Djavax.net.ssl.trustStoreType=PKCS12 -Djava.security.auth.login.config=/opt/apache-artemis-2.53.0.redhat-00003/bin/LdapOnRHEL/etc/login.config"
-
--Djavax.net.ssl.trustStore=/opt/apache-artemis-2.53.0.redhat-00003/bin/LdapOnRHEL/etc/amq-ldap-truststore.p12 \
--Djava.security.auth.login.config=/opt/apache-artemis-2.53.0.redhat-00003/bin/LdapOnRHEL/etc/login.config
-
-
-~~~
-
-### LdapSearch
-~~~
-ldapsearch -x -H ldap://localhost:389 -D "cn=admin,dc=redhat,dc=com" -w admin -b "dc=redhat,dc=com"
-~~~
