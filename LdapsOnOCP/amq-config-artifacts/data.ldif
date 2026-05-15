@@ -1,0 +1,27 @@
+dn: ou=users,dc=example,dc=org
+objectClass: organizationalUnit
+ou: users
+
+dn: uid=testadmin,ou=users,dc=example,dc=org
+objectClass: inetOrgPerson
+cn: Test Admin
+sn: Admin
+uid: testadmin
+userPassword: admin
+
+dn: cn=tst.OpenShift.Admins,dc=example,dc=org
+objectClass: groupOfUniqueNames
+cn: tst.OpenShift.Admins
+uniqueMember: uid=testadmin,ou=users,dc=example,dc=org
+
+dn: uid=riemann,dc=example,dc=org
+objectClass: inetOrgPerson
+cn: Bernhard Riemann
+sn: Riemann
+uid: riemann
+userPassword: password
+
+dn: cn=admingroup,dc=example,dc=org
+objectClass: groupOfUniqueNames
+cn: admingroup
+uniqueMember: uid=riemann,dc=example,dc=org

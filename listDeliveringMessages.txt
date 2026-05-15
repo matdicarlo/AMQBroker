@@ -1,0 +1,84 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: broker.amq.io/v1beta1
+kind: ActiveMQArtemis
+metadata:
+  creationTimestamp: "2026-05-14T12:28:44Z"
+  generation: 4
+  name: ex-aao
+  namespace: brokerldap
+  resourceVersion: "1047153"
+  uid: 7b58ace1-0137-4891-9fae-2ff6f58247be
+spec:
+  brokerProperties:
+  - loggers.org.apache.activemq.artemis.spi.core.security.jaas.level=DEBUG
+  - loggers.org.apache.activemq.audit.security.level=DEBUG
+  deploymentPlan:
+    extraMounts:
+      secrets:
+      - custom-jaas-config
+    image: placeholder
+    jolokiaAgentEnabled: false
+    journalType: nio
+    managementRBACEnabled: true
+    messageMigration: false
+    persistenceEnabled: false
+    requireLogin: true
+    size: 2
+  env:
+  - name: JAVA_ARGS_APPEND
+      value: '-Djava.security.auth.login.config=/amq/extra/secrets/custom-jaas-config/login.config -Dcom.sun.jndi.ldap.connect.debug=all'
+
+status:
+  conditions:
+  - lastTransitionTime: "2026-05-14T12:28:44Z"
+    message: ""
+    observedGeneration: 4
+    reason: ValidationSucceded
+    status: "True"
+    type: Valid
+  - lastTransitionTime: "2026-05-14T12:33:05Z"
+    message: 'HTTP STATUS 429. Message: error: 429 Too Many Requests'
+    reason: UnableToRetrieveStatus
+    status: Unknown
+    type: BrokerPropertiesApplied
+  - lastTransitionTime: "2026-05-14T12:47:57Z"
+    message: ""
+    reason: AllPodsReady
+    status: "True"
+    type: Deployed
+  - lastTransitionTime: "2026-05-14T12:47:57Z"
+    message: ""
+    reason: ResourceReady
+    status: "True"
+    type: Ready
+  - lastTransitionTime: "2026-05-14T12:33:05Z"
+    message: 'HTTP STATUS 429. Message: error: 429 Too Many Requests'
+    reason: UnableToRetrieveStatus
+    status: Unknown
+    type: BrokerVersionAligned
+  - lastTransitionTime: "2026-05-14T12:33:05Z"
+    message: 'HTTP STATUS 429. Message: error: 429 Too Many Requests'
+    reason: UnableToRetrieveStatus
+    status: Unknown
+    type: JaasPropertiesApplied
+  deploymentPlanSize: 2
+  externalConfigs:
+  - name: custom-jaas-config
+    resourceVersion: "1040213"
+  podStatus:
+    ready:
+    - ex-aao-ss-0
+    - ex-aao-ss-1
+  scaleLabelSelector: ActiveMQArtemis=ex-aao,application=ex-aao-app
+  upgrade:
+    majorUpdates: true
+    minorUpdates: true
+    patchUpdates: true
+    securityUpdates: true
+  version:
+    brokerVersion: 7.14.0
+    image: registry.redhat.io/amq7/amq-broker-rhel9@sha256:e92a994e82d2ddbd902aecf4be3e349f57bfad367c68f3b1e641d747dd10b74e
+    initImage: registry.redhat.io/amq7/amq-broker-init-rhel9@sha256:cd838a76188b2a2afb8bccca9e85bcdf4dae8a21f71a72c5f3149a0592192a58

@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openldap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openldap
+  template:
+    metadata:
+      labels:
+        app: openldap
+    spec:
+      initContainers:
+      - name: copy-certs
+        image: busybox
+        command: ['sh', '-c', 'cp /mnt/certs/* /container/service/slapd/assets/certs/ && chmod 664 /container/service/slapd/assets/certs/*.key && chmod 644 /container/service/slapd/assets/certs/*.crt']
+        volumeMounts:
+        - name: ldap-certs-secret
+          mountPath: /mnt/certs
+        - name: writable-certs
+          mountPath: /container/service/slapd/assets/certs
+      containers:
+      - name: openldap
+        image: docker.io/osixia/openldap:latest
+        env:
+        - name: LDAP_TLS
+          value: "true"
+        - name: LDAP_TLS_CRT_FILENAME
+          value: "ldap.crt"
+        - name: LDAP_TLS_KEY_FILENAME
+          value: "ldap.key"
+        - name: LDAP_TLS_CA_CRT_FILENAME
+          value: "ca.crt"
+        - name: LDAP_ADMIN_PASSWORD
+          value: "password0"
+        - name: LDAP_DOMAIN
+          value: "example.org"
+        - name: LDAP_TLS_VERIFY_CLIENT
+          value: "never"
+        ports:
+        - containerPort: 636
+          name: ldaps
+        volumeMounts:
+        - name: writable-certs
+          mountPath: /container/service/slapd/assets/certs
+      volumes:
+      - name: ldap-certs-secret
+        secret:
+          secretName: ldap-certs
+      - name: writable-certs
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openldap
+spec:
+  ports:
+  - name: ldaps
+    port: 636
+    targetPort: 636
+  selector:
+    app: openldap
