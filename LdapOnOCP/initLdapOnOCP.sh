@@ -14,7 +14,7 @@ oc project ${NAMESPACE} || oc new-project ${NAMESPACE}
 
 # --- 1. Deploy OpenLDAP ---
 echo "Deploying OpenLDAP..."
-# We use a template-like approach for LDAP to ensure SA is set from the start
+
 cat <<EOF | oc apply -f -
 apiVersion: apps/v1
 kind: Deployment
@@ -44,7 +44,6 @@ EOF
 
 echo "Configuring LDAP Service Account and SCC..."
 oc create sa ${LDAP_NAME}-sa --dry-run=client -o yaml | oc apply -f -
-# This is the critical step for LDAP permissions on OpenShift
 oc adm policy add-scc-to-user anyuid -z ${LDAP_NAME}-sa
 
 # Wait for LDAP to be ready
