@@ -1,0 +1,21 @@
+lowercaseOutputName: true
+lowercaseOutputLabelNames: true
+
+includeObjectNames: ["org.apache.activemq.artemis:*"]
+
+rules:
+  - pattern: 'org.apache.activemq.artemis<broker="([^"]*)", component=addresses, address="([^"]*)"><>AddressSize'
+    name: artemis_address_size
+    type: GAUGE
+    labels:
+      broker: "$1"
+      address: "$2"
+
+  - pattern: 'org.apache.activemq.artemis<broker="([^"]*)", component=addresses, address="([^"]*)", subcomponent=queues, routing-type="([^"]*)", queue="([^"]*)"><>ConsumerCount'
+    name: artemis_consumer_count
+    type: GAUGE
+    labels:
+      broker: "$1"
+      address: "$2"
+      routing_type: "$3"
+      queue: "$4"
