@@ -1,0 +1,106 @@
+apiVersion: broker.amq.io/v1beta1
+kind: ActiveMQArtemis
+metadata:
+  creationTimestamp: "2026-07-13T13:32:25Z"
+  generation: 17
+  name: broker-1
+  namespace: broker-f
+  resourceVersion: "960096"
+  uid: 60210022-9e4b-4708-a642-7d5dd3aada9e
+spec:
+  acceptors:
+  - expose: true
+    name: mqtt
+    port: 1883
+    protocols: mqtt
+  - expose: true
+    name: amqp
+    port: 5672
+    protocols: amqp,core
+  - expose: true
+    name: amqp-router
+    port: 5673
+    protocols: amqp
+  brokerProperties:
+  - pageSyncTimeout=30000
+  - messageExpiryScanPeriod=-1
+  - connectorConfigurations.target-broker-0.factoryClassName=org.apache.activemq.artemis.core.remoting.impl.netty.NettyConnectorFactory
+  - connectorConfigurations.target-broker-0.params.host=broker-0-hdls-svc.broker-f.svc.cluster.local
+  - connectorConfigurations.target-broker-0.params.port=5672
+  - connectorConfigurations.target-broker-1.factoryClassName=org.apache.activemq.artemis.core.remoting.impl.netty.NettyConnectorFactory
+  - connectorConfigurations.target-broker-1.params.host=broker-1-hdls-svc.broker-f.svc.cluster.local
+  - connectorConfigurations.target-broker-1.params.port=5672
+  - clusterUser=cluster-admin-user
+  - clusterPassword=cluster-admin-password
+  - clusterConfigurations.my-cluster.connectorName=target-broker-1
+  - clusterConfigurations.my-cluster.staticConnectors=target-broker-0,target-broker-1
+  - clusterConfigurations.my-cluster.messageLoadBalancingType=ON_DEMAND
+  - connectionRouters.client-router.keyType=CLIENT_ID
+  - connectionRouters.client-router.policyConfiguration=CONSISTENT_HASH_MODULO
+  - connectionRouters.client-router.policyConfiguration.properties.MODULO=2
+  - connectionRouters.client-router.localTargetFilter=1|-1
+  - acceptorConfigurations.mqtt.params.router=client-router
+  deploymentPlan:
+    image: placeholder
+    jolokiaAgentEnabled: false
+    journalType: nio
+    managementRBACEnabled: true
+    messageMigration: false
+    persistenceEnabled: true
+    requireLogin: false
+    size: 1
+    storage:
+      size: 2Gi
+  env:
+  - name: BROKER_0_USER
+    valueFrom:
+      secretKeyRef:
+        key: AMQ_USER
+        name: broker-0-credentials-secret
+  - name: BROKER_0_PASS
+    valueFrom:
+      secretKeyRef:
+        key: AMQ_PASSWORD
+        name: broker-0-credentials-secret
+status:
+  conditions:
+  - lastTransitionTime: "2026-07-13T13:32:25Z"
+    message: ""
+    observedGeneration: 17
+    reason: ValidationSucceded
+    status: "True"
+    type: Valid
+  - lastTransitionTime: "2026-07-14T13:20:19Z"
+    message: ""
+    reason: Applied
+    status: "True"
+    type: BrokerPropertiesApplied
+  - lastTransitionTime: "2026-07-14T13:20:18Z"
+    message: ""
+    reason: AllPodsReady
+    status: "True"
+    type: Deployed
+  - lastTransitionTime: "2026-07-14T13:20:18Z"
+    message: ""
+    reason: ResourceReady
+    status: "True"
+    type: Ready
+  - lastTransitionTime: "2026-07-14T13:20:19Z"
+    message: ""
+    reason: VersionMatch
+    status: "True"
+    type: BrokerVersionAligned
+  deploymentPlanSize: 1
+  podStatus:
+    ready:
+    - broker-1-ss-0
+  scaleLabelSelector: ActiveMQArtemis=broker-1,application=broker-1-app
+  upgrade:
+    majorUpdates: true
+    minorUpdates: true
+    patchUpdates: true
+    securityUpdates: true
+  version:
+    brokerVersion: 7.14.0
+    image: registry.redhat.io/amq7/amq-broker-rhel9@sha256:ec6a178d76a1521ea68ef312b43db6b952802d02431ad81f1b9bd107015c621d
+    initImage: registry.redhat.io/amq7/amq-broker-init-rhel9@sha256:e69a706d187131aa9edb12864442a62a9ab75332cafa46d9d18f43bbd6dab0a2

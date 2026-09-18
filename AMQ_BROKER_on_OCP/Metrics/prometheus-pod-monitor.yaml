@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: artemis-pod-monitor
+  namespace: broker
+spec:
+  selector:
+    matchLabels:
+      ActiveMQArtemis: ex-aao  # The verified label from your pod (oc get pod <podname> -n <namespace> --show-labels)
+  podMetricsEndpoints:
+  - portNumber: 8161           # Force discovery via a known container port
+    path: /metrics
+    interval: 30s
+    relabelings:
+    # Intercept the target address (pod_ip:8161) and rewrite it to (pod_ip:9404)
+    - sourceLabels: [__address__]
+      regex: "([^:]+):\\d+"
+      targetLabel: __address__
+      replacement: "${1}:9404"
+      action: replace

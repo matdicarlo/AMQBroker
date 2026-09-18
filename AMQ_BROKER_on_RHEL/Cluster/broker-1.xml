@@ -75,14 +75,14 @@ under the License.
       
       <!--
        This value was determined through a calculation.
-       Your system could perform 17.86 writes per millisecond
+       Your system could perform 20.83 writes per millisecond
        on the current journal configuration.
-       That translates as a sync write every 56000 nanoseconds.
+       That translates as a sync write every 48000 nanoseconds.
 
        Note: If you specify 0 the system will perform writes directly to the disk.
              We recommend this to be 0 if you are using journalType=MAPPED and journal-datasync=false.
       -->
-      <journal-buffer-timeout>56000</journal-buffer-timeout>
+      <journal-buffer-timeout>48000</journal-buffer-timeout>
 
 
       <!--
@@ -115,16 +115,19 @@ under the License.
       <!-- use this to customize the ping used for ipv6 addresses -->
       <!-- <network-check-ping6-command>ping6 -c 1 %2$s</network-check-ping6-command> -->
 
+
+
+
         <connectors>
-            <connector name="netty-connector">tcp://localhost:61617</connector> 
-            <connector name="b1">tcp://localhost:61616</connector> 
+            <connector name="netty-connector">tcp://localhost:61616</connector>
+            <connector name="b2">tcp://localhost:61617</connector>
         </connectors>
 
         <cluster-connections>
             <cluster-connection name="my-cluster">
                 <connector-ref>netty-connector</connector-ref>
                 <static-connectors>
-                    <connector-ref>b1</connector-ref>
+                    <connector-ref>b2</connector-ref>
                 </static-connectors>
             </cluster-connection>
         </cluster-connections>
@@ -148,7 +151,7 @@ under the License.
       <critical-analyzer-policy>HALT</critical-analyzer-policy>
 
       
-      <page-sync-timeout>6280000</page-sync-timeout>
+      <page-sync-timeout>6268000</page-sync-timeout>
 
 
       <!-- the system will enter into page mode once you hit this limit. This is an estimate in bytes of how much the messages are using in memory
@@ -178,16 +181,14 @@ under the License.
 
 
          <!-- Acceptor for every supported protocol -->
-         <acceptor name="artemis">tcp://0.0.0.0:61617?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;amqpMinLargeMessageSize=102400;protocols=CORE,AMQP,STOMP,HORNETQ,MQTT,OPENWIRE;useEpoll=true;amqpCredits=1000;amqpLowCredits=300;amqpDuplicateDetection=true;supportAdvisory=false;suppressInternalManagementObjects=false</acceptor>
-	 
+         <acceptor name="artemis">tcp://0.0.0.0:61616?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;amqpMinLargeMessageSize=102400;protocols=CORE,AMQP,STOMP,HORNETQ,MQTT,OPENWIRE;useEpoll=true;amqpCredits=1000;amqpLowCredits=300;amqpDuplicateDetection=true;supportAdvisory=false;suppressInternalManagementObjects=false</acceptor>
 
 	 <!--
-	 <acceptor name="amqp">tcp://0.0.0.0:5672?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpLowCredits=300;amqpMinLargeMessageSize=102400;amqpDuplicateDetection=true</acceptor>
+         <acceptor name="amqp">tcp://0.0.0.0:5672?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpLowCredits=300;amqpMinLargeMessageSize=102400;amqpDuplicateDetection=true</acceptor>
          <acceptor name="stomp">tcp://0.0.0.0:61613?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=STOMP;useEpoll=true</acceptor>
          <acceptor name="hornetq">tcp://0.0.0.0:5445?anycastPrefix=jms.queue.;multicastPrefix=jms.topic.;protocols=HORNETQ,STOMP;useEpoll=true</acceptor>
          <acceptor name="mqtt">tcp://0.0.0.0:1883?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=MQTT;useEpoll=true</acceptor>
 	 -->
-
       </acceptors>
 
 
@@ -209,7 +210,7 @@ under the License.
 
       <address-settings>
          <!-- if you define auto-create on certain queues, management has to be auto-create -->
-         <address-setting match="activemq.management#">
+         <address-setting match="activemq.management.#">
             <dead-letter-address>DLQ</dead-letter-address>
             <expiry-address>ExpiryQueue</expiry-address>
             <redelivery-delay>0</redelivery-delay>
@@ -250,10 +251,10 @@ under the License.
 
             <page-limit-bytes>-1</page-limit-bytes>
             <page-limit-messages>-1</page-limit-messages>
-           </address-setting>
-           <address-setting match="testqueue">
-              <redistribution-delay>0</redistribution-delay>
-           </address-setting>
+          </address-setting>
+          <address-setting match="testqueue">
+    	     <redistribution-delay>0</redistribution-delay>
+   	  </address-setting>
       </address-settings>
 
       <addresses>
@@ -267,8 +268,13 @@ under the License.
                <queue name="ExpiryQueue" />
             </anycast>
          </address>
+         <address name="test">
+            <multicast>
+               <queue name="test" />
+            </multicast>
+         </address>
          <address name="testqueue">
-	    <anycast>
+            <anycast>
                <queue name="testqueue" />
             </anycast>
          </address>
